@@ -1,0 +1,44 @@
+.container {
+  padding: 1% 0;
+  width: 60%;
+  @media screen and (max-width: 1020px) {
+    width: 80%;
+  }
+  @media screen and (max-width: 821px) {
+    width: 100%;
+  }
+
+  .paper {
+    width: 100%;
+    overflow: hidden;
+
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(2, 119, 189, 0.6);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(2, 119, 189, 0.8);
+    }
+
+    .tableContainer {
+      max-height: 480px;
+      width: 100%;
+
+      .table {
+        max-height: 440px;
+      }
+    }
+  }
+
+  .btn {
+    padding: 0 2%;
+  }
+}

@@ -1,46 +1,84 @@
-# Getting Started with Create React App
+ О проекте:
+ В репозитории собержится серверная часть и фронт-енд.
+ Серверная запускается из папки server, фронт из папки my-app
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Backend
+инструменты: БД -postgresql (скрипт для запуска ниже), node js, express , postman 
+в SPA использован только get запрос, но сервер подготовлен для CRUD операций.
 
-## Available Scripts
 
-In the project directory, you can run:
+Frontend 
+инструменты: React, Redux toolkit, Thunk, axios, SASS+ MUI, Jest(тесты)
+придожение состоит из одной страницы (TablePage), на которую добавлена таблица, состоящая из нескольких компонент.
+Так же есть header, в котором распологаются компоненты фильтров для поиска. Поиск может осуществляться при нажатии на лупу или на кнопку 'Enter'.
+Подгрузка данных осуществяется нажатием на кнопку load more. 
+Root Reducer разбит на 3: appReducer (общий, в который отвечает за статус и ошибки), paramsReducer (в нем содержаться настройки для get запроса)
+и  tableReducer (в нем 2 кейса - первичная загрузка данных таблицы и загрузка новой партии данных )
 
-### `yarn start`
+Комментарии:
+-В ходе выполнения возник вопрос про фильтрацию 
+фильтровать надо только уже полученные данные (тогда это front) или фильтрация должна происходить по всем данным (тогда это back).
+В данном приложении фильтрация идет через запрос на back and и БД.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+-Пагинация
+Так же было 2 варианта: сделать ее классическим способом (вывести количество страниц и при клике на нужную выдавать данные),
+сдалать прогрузку новых данных при клике на кнопку (данный вариант показался мне более удобным для таблицы)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+В данном приложении не хватает адаптивной верстки, обработки ошибок на backend
 
-### `yarn test`
+Скрипт создания БД (postgresql):
+1.создаем базу
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `yarn build`
+CREATE DATABASE node_test_base
+WITH
+OWNER = postgres
+ENCODING = 'UTF8'
+LC_COLLATE = 'English_United States.1252'
+LC_CTYPE = 'English_United States.1252'
+TABLESPACE = pg_default
+CONNECTION LIMIT = -1;
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2. создаем таблицу
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+   CREATE TABLE IF NOT EXISTS public.test
+   (
+   id integer NOT NULL DEFAULT nextval('test_id_seq'::regclass),
+   planned_date date,
+   title character varying(225) COLLATE pg_catalog."default",
+   quantity bigint,
+   distance bigint,
+   CONSTRAINT test_pkey PRIMARY KEY (id)
+   )
 
-### `yarn eject`
+TABLESPACE pg_default;
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+ALTER TABLE IF EXISTS public.test
+OWNER to postgres;
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+3. заполняем таблицу даннными
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+INSERT INTO test (planned_date, title, quantity, distance) VALUES
+(date '2022-01-08',  'стриж', 7, 5),
+(date '2022-07-13', 'аллегро', 5, 19 ),
+(date '2021-01-13', 'сапсан', 10, 11 ),
+(date '2019-05-20',  'мегаполис', 7, 5),
+(date '2022-04-01', 'липецк', 16, 14 ),
+(date '2021-10-01', 'лев толстрой', 10, 11 ),
+(date '2022-06-06', 'вятка', 10, 11 ),
+(date '2019-11-08',  'ластрочка', 7, 5),
+(date '2022-03-05', 'красная стрела', 10, 11 ),
+(date '2021-06-11', 'мордовия', 16, 14 ),
+(date '2022-04-16', 'сура', 16, 11 ),
+(date '2021-12-31',  'жигули', 7, 5),
+(date '2022-01-24', 'янтарь', 10, 11 ),
+(date '2022-03-08', 'нижегородец', 16, 14 ),
+(date '2022-10-19',  'шексна', 7, 5),
+(date '2021-10-01', 'ласточка', 6, 19 ),
+(date '2022-06-06', 'латвияс экспресс', 7, 5),
+(date '2022-03-05', 'сапсан', 9, 11 ),
+(date '2021-06-11', 'томич', 10, 7 ),
+(date '2022-12-13', 'арктика', 1,2);
